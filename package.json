@@ -7,8 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "export": "next export",
-    "deploy": "npm run build && npm run export"
+  "deploy": "next build"
   },
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
