@@ -159,7 +159,7 @@ export default function Home() {
 
           {/* Extensions panel - renders its own layout */}
           {activeView === 'extensions' && !isMobileSidebarOpen && (
-            <ExtensionsPanel width={sidebarWidth} onExtensionClick={handleExtensionClick} onWidthChange={handleWidthChange} />
+            <ExtensionsPanel width={sidebarWidth} onWidthChange={handleWidthChange} />
           )}
         </div>
 
@@ -167,7 +167,6 @@ export default function Home() {
           currentFile={currentFile}
           fileClickCount={fileClickCount}
           showTabs={activeView === 'explorer' || activeView === 'search'}
-          selectedExtension={selectedExtension}
         />
       </div>
 
