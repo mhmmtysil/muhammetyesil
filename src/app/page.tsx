@@ -31,6 +31,10 @@ export default function Home() {
     setIsMobileSidebarOpen(false);
   };
 
+  const handleWidthChange = (newWidth: number) => {
+    setSidebarWidth(newWidth);
+  };
+
   const handleViewChange = (view: string) => {
     setActiveView(view);
     // Toggle mobile sidebar
@@ -70,12 +74,20 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const handleMove = (e: MouseEvent) => {
+      handleMouseMove(e);
+    };
+
+    const handleUp = () => {
+      handleMouseUp();
+    };
+
     if (isResizing || isResizingSidebar) {
-      window.addEventListener('mousemove', handleMouseMove as any);
-      window.addEventListener('mouseup', handleMouseUp);
+      document.addEventListener('mousemove', handleMove);
+      document.addEventListener('mouseup', handleUp);
       return () => {
-        window.removeEventListener('mousemove', handleMouseMove as any);
-        window.removeEventListener('mouseup', handleMouseUp);
+        document.removeEventListener('mousemove', handleMove);
+        document.removeEventListener('mouseup', handleUp);
       };
     }
   }, [isResizing, isResizingSidebar]);
@@ -111,8 +123,8 @@ export default function Home() {
       <div className="flex-1 flex overflow-hidden relative">
         {/* Desktop ActivityBar */}
         <div className="hidden md:block h-full">
-          <ActivityBar 
-            activeView={activeView} 
+          <ActivityBar
+            activeView={activeView}
             setActiveView={setActiveView}
             onTerminalToggle={() => setIsTerminalOpen(!isTerminalOpen)}
             isTerminalOpen={isTerminalOpen}
@@ -125,56 +137,54 @@ export default function Home() {
         `}>
           {/* Mobile overlay backdrop */}
           {isMobileSidebarOpen && (
-            <div 
+            <div
               className="md:hidden absolute inset-0 bg-black bg-opacity-50"
               onClick={() => setIsMobileSidebarOpen(false)}
             />
           )}
-          
-          {/* Sidebar content */}
-          <div className={`
-            ${isMobileSidebarOpen ? 'absolute left-0 top-0 bottom-0 z-10' : ''}
-            md:relative md:h-full
-          `} style={{ width: isMobileSidebarOpen ? 'auto' : `${sidebarWidth}px` }}>
-            {activeView === 'explorer' && <Sidebar onFileSelect={handleFileSelect} width={sidebarWidth} />}
-            {activeView === 'search' && <SearchPanel onFileSelect={handleFileSelect} width={sidebarWidth} />}
-            {activeView === 'git' && <GitPanel width={sidebarWidth} />}
-            {activeView === 'extensions' && <ExtensionsPanel width={sidebarWidth} />}
-          </div>
 
-          {/* Resize handle */}
-          {!isMobileSidebarOpen && (
-            <div 
-              className={`hidden md:block w-1 bg-[#252526] hover:bg-[#007acc] cursor-ew-resize transition-colors relative ${
-                isResizingSidebar ? 'bg-[#007acc]' : ''
-              }`}
-              onMouseDown={handleSidebarMouseDown}
-            >
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="h-12 w-0.5 bg-gray-600 hover:bg-[#007acc] transition-colors rounded-full" />
+          {/* Sidebar content - only for explorer, search, git */}
+          {activeView !== 'extensions' && (
+            <>
+              <div className={`
+                ${isMobileSidebarOpen ? 'absolute left-0 top-0 bottom-0 z-10' : ''}
+                md:relative md:h-full
+              `}>
+                {activeView === 'explorer' && <Sidebar onFileSelect={handleFileSelect} width={sidebarWidth} onWidthChange={handleWidthChange} />}
+                {activeView === 'search' && <SearchPanel onFileSelect={handleFileSelect} width={sidebarWidth} onWidthChange={handleWidthChange} />}
+                {activeView === 'git' && <GitPanel width={sidebarWidth} onWidthChange={handleWidthChange} />}
               </div>
-            </div>
+            </>
+          )}
+
+          {/* Extensions panel - renders its own layout */}
+          {activeView === 'extensions' && !isMobileSidebarOpen && (
+            <ExtensionsPanel width={sidebarWidth} onExtensionClick={handleExtensionClick} onWidthChange={handleWidthChange} />
           )}
         </div>
 
-        <Editor currentFile={currentFile} fileClickCount={fileClickCount} showTabs={activeView === 'explorer' || activeView === 'search'} />
+        <Editor
+          currentFile={currentFile}
+          fileClickCount={fileClickCount}
+          showTabs={activeView === 'explorer' || activeView === 'search'}
+          selectedExtension={selectedExtension}
+        />
       </div>
 
       {/* Terminal */}
       {isTerminalOpen && (
         <>
-          <div 
-            className={`group h-1 bg-[#252526] cursor-ns-resize transition-all relative ${
-              isResizing ? 'bg-[#007acc]' : 'hover:bg-[#007acc]'
-            }`}
+          <div
+            className="group h-3 bg-[#252526] hover:bg-[#007acc] cursor-ns-resize transition-colors relative z-50 flex items-center justify-center"
+            style={{ 
+              backgroundColor: isResizing ? '#007acc' : undefined 
+            }}
             onMouseDown={handleMouseDown}
           >
-            <div className="absolute inset-0 flex items-center justify-center">
-              <div className="w-12 h-0.5 bg-gray-600 group-hover:bg-[#007acc] transition-colors rounded-full" />
-            </div>
+            <div className="w-12 h-1 bg-gray-600 group-hover:bg-[#007acc] transition-colors rounded-full" />
           </div>
-          <Terminal 
-            onFileSelect={handleFileSelect} 
+          <Terminal
+            onFileSelect={handleFileSelect}
             height={terminalHeight}
           />
         </>
@@ -185,8 +195,8 @@ export default function Home() {
 
       {/* Mobile ActivityBar - Bottom */}
       <div className="md:hidden">
-        <ActivityBar 
-          activeView={activeView} 
+        <ActivityBar
+          activeView={activeView}
           setActiveView={handleViewChange}
           onTerminalToggle={() => setIsTerminalOpen(!isTerminalOpen)}
           isTerminalOpen={isTerminalOpen}

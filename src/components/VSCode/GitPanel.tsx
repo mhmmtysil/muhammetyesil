@@ -1,6 +1,43 @@
 'use client';
 
-export default function GitPanel({ width = 250 }: { width?: number }) {
+import { useState, useRef, useEffect } from 'react';
+
+export default function GitPanel({ 
+  width = 250, 
+  onWidthChange 
+}: { 
+  width?: number; 
+  onWidthChange?: (width: number) => void;
+}) {
+  const [currentWidth, setCurrentWidth] = useState(width);
+  const [isResizing, setIsResizing] = useState(false);
+  const panelRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX - (panelRef.current?.getBoundingClientRect().left || 0);
+      if (newWidth >= 200 && newWidth <= 600) {
+        setCurrentWidth(newWidth);
+        onWidthChange?.(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
+
   const commits = [
     { hash: 'a1b2c3d', message: 'Initial portfolio setup', date: '2 saat önce', author: 'Muhammet Yeşil' },
     { hash: 'e4f5g6h', message: 'Add VS Code theme', date: '1 saat önce', author: 'Muhammet Yeşil' },
@@ -9,7 +46,7 @@ export default function GitPanel({ width = 250 }: { width?: number }) {
   ];
 
   return (
-    <div className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full" style={{ width: `${width}px` }}>
+    <div ref={panelRef} className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full relative" style={{ width: `${currentWidth}px` }}>
       <div className="px-4 py-3 text-xs text-gray-400 uppercase tracking-wide border-b border-gray-700">
         Source Control
       </div>
@@ -39,6 +76,13 @@ export default function GitPanel({ width = 250 }: { width?: number }) {
             </div>
           ))}
         </div>
+      </div>
+      {/* Resize Handle - wider hit area */}
+      <div
+        className="absolute top-0 right-0 w-4 h-full cursor-col-resize z-50 group"
+        onMouseDown={() => setIsResizing(true)}
+      >
+        <div className="absolute right-0 top-0 w-0.5 h-full bg-transparent group-hover:bg-blue-500 transition-colors" />
       </div>
     </div>
   );

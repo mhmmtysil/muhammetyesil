@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { FaReact } from 'react-icons/fa';
 
 type FileType = {
@@ -44,8 +44,44 @@ const fileStructure: FileType[] = [
   }
 ];
 
-export default function Sidebar({ onFileSelect, width = 250 }: { onFileSelect: (content: string) => void; width?: number }) {
+export default function Sidebar({ 
+  onFileSelect, 
+  width = 250, 
+  onWidthChange 
+}: { 
+  onFileSelect: (content: string) => void; 
+  width?: number; 
+  onWidthChange?: (width: number) => void;
+}) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['portföy']));
+  const [currentWidth, setCurrentWidth] = useState(width);
+  const [isResizing, setIsResizing] = useState(false);
+  const sidebarRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (!isResizing) return;
+      const newWidth = e.clientX - (sidebarRef.current?.getBoundingClientRect().left || 0);
+      if (newWidth >= 200 && newWidth <= 600) {
+        setCurrentWidth(newWidth);
+        onWidthChange?.(newWidth);
+      }
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(false);
+    };
+
+    if (isResizing) {
+      document.addEventListener('mousemove', handleMouseMove);
+      document.addEventListener('mouseup', handleMouseUp);
+    }
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing]);
 
   const toggleFolder = (folderName: string) => {
     const newExpanded = new Set(expandedFolders);
@@ -91,12 +127,19 @@ export default function Sidebar({ onFileSelect, width = 250 }: { onFileSelect: (
   };
 
   return (
-    <div className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full" style={{ width: `${width}px` }}>
+    <div ref={sidebarRef} className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full relative" style={{ width: `${currentWidth}px` }}>
       <div className="px-4 py-3 text-xs text-gray-400 uppercase tracking-wide border-b border-gray-700">
         Explorer
       </div>
       <div className="flex-1 overflow-y-auto py-2">
         {renderFileTree(fileStructure)}
+      </div>
+      {/* Resize Handle - wider hit area */}
+      <div
+        className="absolute top-0 right-0 w-4 h-full cursor-col-resize z-50 group"
+        onMouseDown={() => setIsResizing(true)}
+      >
+        <div className="absolute right-0 top-0 w-0.5 h-full bg-transparent group-hover:bg-blue-500 transition-colors" />
       </div>
     </div>
   );

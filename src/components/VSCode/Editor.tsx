@@ -17,7 +17,17 @@ const contentMap: Record<string, { component: React.ComponentType; filename: str
     contact: { component: ContactContent, filename: 'iletişim.tsx' },
 };
 
-export default function Editor({ currentFile, fileClickCount, showTabs = true }: { currentFile: string; fileClickCount?: number; showTabs?: boolean }) {
+export default function Editor({
+    currentFile,
+    fileClickCount,
+    showTabs = true,
+    selectedExtension
+}: {
+    currentFile: string;
+    fileClickCount?: number;
+    showTabs?: boolean;
+    selectedExtension?: any;
+}) {
     const [openTabs, setOpenTabs] = useState<string[]>([]);
     const [activeTab, setActiveTab] = useState('');
 
@@ -125,10 +135,10 @@ export default function Editor({ currentFile, fileClickCount, showTabs = true }:
                     </Droppable>
                 </DragDropContext>
                 {/* Editor Content */}
-                <div className="flex-1 overflow-auto p-4 md:p-8 bg-[#1e1e1e]">
+                <div className="flex-1 overflow-auto p-4 md:p-8 bg-[#1e1e1e] relative">
                     {openTabs.length === 0 ? (
-                        <div className="flex items-center justify-center h-full">
-                            <div className="text-center px-4">
+                        <div className="flex items-center justify-center h-full pointer-events-none">
+                            <div className="text-center px-4 pointer-events-auto">
                                 <div className="flex justify-center mb-4">
                                     <VscVscode className="text-gray-700" size={160} />
                                 </div>
@@ -162,7 +172,7 @@ export default function Editor({ currentFile, fileClickCount, showTabs = true }:
                             </div>
                         </div>
                     ) : (
-                        <div className="max-w-4xl" key={activeTab}>
+                        <div key={activeTab}>
                             <CurrentContent />
                         </div>
                     )}

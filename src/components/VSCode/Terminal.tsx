@@ -15,9 +15,10 @@ const initialTerminalContent = [
 
 interface TerminalProps {
     onFileSelect: (file: string) => void;
+    height?: number;
 }
 
-export default function Terminal({ onFileSelect }: TerminalProps) {
+export default function Terminal({ onFileSelect, height = 200 }: TerminalProps) {
     const [lines, setLines] = useState<Array<{ type: string; text: string }>>([]);
     const [currentLine, setCurrentLine] = useState(0);
     const [input, setInput] = useState('');
@@ -127,7 +128,10 @@ export default function Terminal({ onFileSelect }: TerminalProps) {
     };
 
     return (
-        <div className="h-48 bg-[#1e1e1e] border-t border-gray-700 flex flex-col">
+        <div 
+            className="bg-[#1e1e1e] border-t border-gray-700 flex flex-col"
+            style={{ height: `${height}px` }}
+        >
             <div className="flex items-center gap-4 px-4 py-2 bg-[#252526] border-b border-gray-700">
                 <span className="text-sm text-gray-300">TERMINAL</span>
                 <span className="text-xs text-gray-500">bash</span>
