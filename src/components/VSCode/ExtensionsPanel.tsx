@@ -6,7 +6,7 @@ import { TbBrandCSharp } from 'react-icons/tb';
 import { IoChatboxEllipsesOutline } from 'react-icons/io5';
 import { MdVerified, MdClose } from 'react-icons/md';
 
-export default function ExtensionsPanel() {
+export default function ExtensionsPanel({ width = 250 }: { width?: number }) {
     const [selectedExtensionUrl, setSelectedExtensionUrl] = useState<string | null>(null);
 
     const extensions = [
@@ -78,7 +78,7 @@ export default function ExtensionsPanel() {
 
     return (
         <>
-            <div className="w-80 bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full">
+            <div className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full" style={{ width: `${width}px` }}>
                 <div className="px-4 py-3 text-xs text-gray-400 uppercase tracking-wide border-b border-gray-700">
                     Extensions
                 </div>

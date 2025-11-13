@@ -15,10 +15,9 @@ const initialTerminalContent = [
 
 interface TerminalProps {
     onFileSelect: (file: string) => void;
-    height?: number;
 }
 
-export default function Terminal({ onFileSelect, height = 200 }: TerminalProps) {
+export default function Terminal({ onFileSelect }: TerminalProps) {
     const [lines, setLines] = useState<Array<{ type: string; text: string }>>([]);
     const [currentLine, setCurrentLine] = useState(0);
     const [input, setInput] = useState('');
@@ -62,14 +61,11 @@ export default function Terminal({ onFileSelect, height = 200 }: TerminalProps) 
         } else if (lowerCmd === 'date') {
             output = new Date().toString();
         } else if (lowerCmd === 'skills') {
-            output = 'Opening Skills tab...';
-            onFileSelect('skills.tsx');
+            output = 'Tech Stack: C#, .NET, React, Next.js, Unity, SQL Server, MongoDB\nType "projects" to see my work!';
         } else if (lowerCmd === 'projects') {
-            output = 'Opening Projects tab...';
-            onFileSelect('projects.tsx');
+            output = '8 projects available - Check the Projects tab for details';
         } else if (lowerCmd === 'contact') {
-            output = 'Opening Contact tab...';
-            onFileSelect('contact.tsx');
+            output = 'Contact Information:\n  Email: muhammetyesil@outlook.com.tr\n  GitHub: github.com/mhmmtysil\n  Instagram: @mhmmtysil\n  LinkedIn: linkedin.com/in/muhammetyesil';
         } else if (lowerCmd === 'email') {
             output = 'Opening email client...';
             window.open('mailto:muhammetyesil@outlook.com.tr', '_blank');
@@ -88,12 +84,6 @@ export default function Terminal({ onFileSelect, height = 200 }: TerminalProps) 
 
         setLines([...newLines, { type: 'output', text: output }]);
         setInput('');
-        
-        // Focus input after command
-        setTimeout(() => {
-            inputRef.current?.focus();
-            inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' });
-        }, 0);
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -137,8 +127,8 @@ export default function Terminal({ onFileSelect, height = 200 }: TerminalProps) 
     };
 
     return (
-        <div className="bg-[#1e1e1e] flex flex-col" style={{ height: `${height}px` }}>
-            <div className="flex items-center gap-4 px-4 py-2 bg-[#252526] border-b border-gray-700 select-none">
+        <div className="h-48 bg-[#1e1e1e] border-t border-gray-700 flex flex-col">
+            <div className="flex items-center gap-4 px-4 py-2 bg-[#252526] border-b border-gray-700">
                 <span className="text-sm text-gray-300">TERMINAL</span>
                 <span className="text-xs text-gray-500">bash</span>
             </div>

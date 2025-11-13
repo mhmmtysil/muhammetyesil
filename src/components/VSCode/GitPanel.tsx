@@ -1,6 +1,6 @@
 'use client';
 
-export default function GitPanel() {
+export default function GitPanel({ width = 250 }: { width?: number }) {
   const commits = [
     { hash: 'a1b2c3d', message: 'Initial portfolio setup', date: '2 saat önce', author: 'Muhammet Yeşil' },
     { hash: 'e4f5g6h', message: 'Add VS Code theme', date: '1 saat önce', author: 'Muhammet Yeşil' },
@@ -9,7 +9,7 @@ export default function GitPanel() {
   ];
 
   return (
-    <div className="w-64 bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full">
+    <div className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full" style={{ width: `${width}px` }}>
       <div className="px-4 py-3 text-xs text-gray-400 uppercase tracking-wide border-b border-gray-700">
         Source Control
       </div>

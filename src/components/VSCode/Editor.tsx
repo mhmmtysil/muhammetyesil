@@ -125,15 +125,20 @@ export default function Editor({ currentFile, fileClickCount, showTabs = true }:
                     </Droppable>
                 </DragDropContext>
                 {/* Editor Content */}
-                <div className="flex-1 overflow-auto p-8 bg-[#1e1e1e]">
+                <div className="flex-1 overflow-auto p-4 md:p-8 bg-[#1e1e1e]">
                     {openTabs.length === 0 ? (
                         <div className="flex items-center justify-center h-full">
-                            <div className="text-center">
-                                <VscVscode className="mx-auto mb-4 text-gray-700" size={260} />
-                                <p className="text-xl text-gray-500 mb-2">Açık dosya yok</p>
-                                <p className="text-sm text-gray-500 mb-8">Sol menüden bir dosya seçin</p>
+                            <div className="text-center px-4">
+                                <div className="flex justify-center mb-4">
+                                    <VscVscode className="text-gray-700" size={160} />
+                                </div>
+                                <p className="text-lg md:text-xl text-gray-500 mb-2">Açık dosya yok</p>
+                                <p className="text-xs md:text-sm text-gray-500 mb-8">
+                                    <span className="md:hidden">Alt menüden 📁 Explorer'a tıklayıp bir dosya seçin</span>
+                                    <span className="hidden md:inline">Sol menüden bir dosya seçin</span>
+                                </p>
 
-                                <div className="flex items-center justify-center gap-6 text-gray-500">
+                                <div className="hidden md:flex items-center justify-center gap-6 text-gray-500">
                                     <div className="flex items-center gap-2">
                                         <VscTerminal size={20} className="text-gray-600" />
                                         <span className="text-sm">Terminal için:</span>

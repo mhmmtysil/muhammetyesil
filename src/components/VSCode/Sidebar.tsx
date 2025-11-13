@@ -44,7 +44,7 @@ const fileStructure: FileType[] = [
   }
 ];
 
-export default function Sidebar({ onFileSelect }: { onFileSelect: (content: string) => void }) {
+export default function Sidebar({ onFileSelect, width = 250 }: { onFileSelect: (content: string) => void; width?: number }) {
   const [expandedFolders, setExpandedFolders] = useState<Set<string>>(new Set(['portföy']));
 
   const toggleFolder = (folderName: string) => {
@@ -91,7 +91,7 @@ export default function Sidebar({ onFileSelect }: { onFileSelect: (content: stri
   };
 
   return (
-    <div className="w-64 bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full">
+    <div className="bg-[#1e1e1e] border-r border-gray-700 flex flex-col h-full" style={{ width: `${width}px` }}>
       <div className="px-4 py-3 text-xs text-gray-400 uppercase tracking-wide border-b border-gray-700">
         Explorer
       </div>

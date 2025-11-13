@@ -30,11 +30,13 @@ export default Developer;`;
       showLineNumbers
       customStyle={{
         margin: 0,
-        padding: '2rem',
+        padding: '1rem',
         background: '#1e1e1e',
-        fontSize: '15px',
+        fontSize: '13px',
         lineHeight: '1.6',
       }}
+      wrapLongLines={true}
+      className="md:!p-8 md:!text-[15px]"
     >
       {code}
     </SyntaxHighlighter>

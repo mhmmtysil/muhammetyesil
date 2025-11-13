@@ -23,7 +23,7 @@ interface ContactInfo {
 export default ContactInfo;`;
 
     return (
-        <div className="p-8">
+        <div className="p-4 md:p-8">
             <div className="h-full flex flex-col overflow-auto">
                 <div className="flex-shrink-0">
                     <SyntaxHighlighter
@@ -32,11 +32,13 @@ export default ContactInfo;`;
                         showLineNumbers
                         customStyle={{
                             margin: 0,
-                            padding: '2rem',
+                            padding: '1rem',
                             background: '#1e1e1e',
-                            fontSize: '15px',
+                            fontSize: '13px',
                             lineHeight: '1.6',
                         }}
+                        wrapLongLines={true}
+                        className="md:!p-8 md:!text-[15px]"
                     >
                         {code}
                     </SyntaxHighlighter>
