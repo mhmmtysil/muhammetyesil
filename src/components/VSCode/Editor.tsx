@@ -2,15 +2,18 @@
 
 import { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable, DropResult } from '@hello-pangea/dnd';
-import { FaReact } from 'react-icons/fa';
+import getFileIcon from '@/app/helpers/getIcon';
 import { VscCode, VscVscode, VscTerminal } from 'react-icons/vsc';
 import { IoMdArrowRoundDown } from 'react-icons/io';
 import AboutContent from './content/AboutContent';
 import ProjectsContent from './content/ProjectsContent';
 import SkillsContent from './content/SkillsContent';
 import ContactContent from './content/ContactContent';
+import GitignoreContent from './content/GitignoreContent';
 
 const contentMap: Record<string, { component: React.ComponentType; filename: string }> = {
+    gitignore: { component: GitignoreContent, filename: '.gitignore' },
+    packagejson: { component: require('./content/PackageJsonContent').default, filename: 'package.json' },
     about: { component: AboutContent, filename: 'hakkımda.tsx' },
     projects: { component: ProjectsContent, filename: 'projeler.tsx' },
     skills: { component: SkillsContent, filename: 'yetenekler.tsx' },
@@ -21,12 +24,10 @@ export default function Editor({
     currentFile,
     fileClickCount,
     showTabs = true,
-    selectedExtension
 }: {
     currentFile: string;
     fileClickCount?: number;
     showTabs?: boolean;
-    selectedExtension?: any;
 }) {
     const [openTabs, setOpenTabs] = useState<string[]>([]);
     const [activeTab, setActiveTab] = useState('');
@@ -114,7 +115,7 @@ export default function Editor({
                                                 }}
                                             >
                                                 <span></span>
-                                                <FaReact className="text-[#61dafb] flex-shrink-0" size={16} />
+                                                <span>{getFileIcon(contentMap[tab]?.filename || '')}</span>
                                                 <span className="text-sm select-none">{contentMap[tab]?.filename}</span>
                                                 <button
                                                     onClick={(e) => closeTab(tab, e)}

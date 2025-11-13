@@ -1,6 +1,8 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { VscSourceControl, VscGitCommit, VscCircleFilled } from 'react-icons/vsc';
+import { GoGitBranch } from 'react-icons/go';
 
 export default function GitPanel({ 
   width = 250, 
@@ -53,26 +55,33 @@ export default function GitPanel({
       
       <div className="p-4">
         <div className="flex items-center gap-2 mb-4">
-          <span className="text-green-400">⎇</span>
+          <GoGitBranch className="text-gray-400" size={16} />
           <span className="text-gray-300 text-sm">main</span>
         </div>
         
         <div className="space-y-2 mb-4">
-          <div className="text-xs text-gray-400">CHANGES</div>
+          <div className="text-xs text-gray-400 flex items-center gap-2">
+            <VscSourceControl size={14} />
+            <span>CHANGES</span>
+          </div>
           <div className="text-xs text-gray-500 pl-2">No changes</div>
         </div>
       </div>
 
       <div className="border-t border-gray-700 px-4 py-3">
-        <div className="text-xs text-gray-400 mb-3">RECENT COMMITS</div>
+        <div className="text-xs text-gray-400 mb-3 flex items-center gap-2">
+          <VscGitCommit size={14} />
+          <span>RECENT COMMITS</span>
+        </div>
         <div className="space-y-3">
           {commits.map((commit) => (
             <div key={commit.hash} className="text-sm">
               <div className="flex items-start gap-2">
+                <VscCircleFilled className="text-blue-400 flex-shrink-0 mt-0.5" size={8} />
                 <span className="text-blue-400 font-mono text-xs">{commit.hash}</span>
               </div>
-              <div className="text-gray-300 text-xs mt-1">{commit.message}</div>
-              <div className="text-gray-500 text-xs mt-1">{commit.date}</div>
+              <div className="text-gray-300 text-xs mt-1 pl-4">{commit.message}</div>
+              <div className="text-gray-500 text-xs mt-1 pl-4">{commit.date}</div>
             </div>
           ))}
         </div>

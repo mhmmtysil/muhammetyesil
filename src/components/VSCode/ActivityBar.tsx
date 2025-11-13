@@ -1,5 +1,7 @@
 'use client';
 
+import { VscFiles, VscSearch, VscSourceControl, VscExtensions, VscTerminal } from 'react-icons/vsc';
+
 export default function ActivityBar({ 
   activeView, 
   setActiveView,
@@ -14,11 +16,11 @@ export default function ActivityBar({
   isMobile?: boolean;
 }) {
   const icons = [
-    { id: 'explorer', label: 'Explorer', icon: '📁' },
-    { id: 'search', label: 'Search', icon: '🔍' },
-    { id: 'git', label: 'Git', icon: '⎇' },
-    { id: 'extensions', label: 'Extensions', icon: '◧' },
-    { id: 'terminal', label: 'Terminal', icon: '▶', isSpecial: true },
+    { id: 'explorer', label: 'Explorer', icon: <VscFiles size={24} /> },
+    { id: 'search', label: 'Search', icon: <VscSearch size={24} /> },
+    { id: 'git', label: 'Git', icon: <VscSourceControl size={24} /> },
+    { id: 'extensions', label: 'Extensions', icon: <VscExtensions size={24} /> },
+    { id: 'terminal', label: 'Terminal', icon: <VscTerminal size={24} />, isSpecial: true },
   ];
 
   if (isMobile) {
@@ -35,7 +37,7 @@ export default function ActivityBar({
             onClick={() => item.isSpecial ? onTerminalToggle() : setActiveView(item.id)}
             title={item.label}
           >
-            <span className="text-lg">{item.icon}</span>
+            <div className="text-gray-300">{item.icon}</div>
             <span className="text-[9px] text-gray-400 mt-0.5">{item.label}</span>
           </button>
         ))}
@@ -56,7 +58,7 @@ export default function ActivityBar({
           onClick={() => item.isSpecial ? onTerminalToggle() : setActiveView(item.id)}
           title={item.label}
         >
-          <span className="text-xl">{item.icon}</span>
+          <div className="text-gray-300">{item.icon}</div>
         </button>
       ))}
     </div>

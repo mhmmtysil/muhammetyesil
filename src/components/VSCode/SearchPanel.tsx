@@ -1,6 +1,9 @@
 'use client';
 
 import { useState, useRef, useEffect } from 'react';
+import { FaReact } from 'react-icons/fa';
+import { VscSearch } from 'react-icons/vsc';
+import { SiGit } from 'react-icons/si';
 
 export default function SearchPanel({ 
   onFileSelect, 
@@ -16,6 +19,13 @@ export default function SearchPanel({
     const [currentWidth, setCurrentWidth] = useState(width);
     const [isResizing, setIsResizing] = useState(false);
     const panelRef = useRef<HTMLDivElement>(null);
+
+    const getFileIcon = (fileName: string) => {
+        if (fileName === '.gitignore') {
+            return <SiGit className="text-[#f05032] flex-shrink-0" size={12} />;
+        }
+        return <FaReact className="text-[#61dafb] flex-shrink-0" size={12} />;
+    };
 
     useEffect(() => {
         const handleMouseMove = (e: MouseEvent) => {
@@ -43,10 +53,12 @@ export default function SearchPanel({
     }, [isResizing]);
 
     const searchableContent = [
-        { file: 'hakkımda.tsx', content: 'about', lines: ['Muhammet Yeşil', 'Full Stack Developer', 'TypeScript', 'React', 'Next.js'] },
-        { file: 'projeler.tsx', content: 'projects', lines: ['E-Ticaret Platformu', 'Task Yönetim Sistemi', 'API Gateway', 'Next.js', 'MongoDB'] },
-        { file: 'yetenekler.tsx', content: 'skills', lines: ['React', 'Node.js', 'TypeScript', 'MongoDB', 'Docker', 'AWS'] },
-        { file: 'iletişim.tsx', content: 'contact', lines: ['email', 'github', 'instagram', 'linkedin'] },
+    { file: '.gitignore', content: 'gitignore', lines: ['negativity', 'procrastination', 'toxic', 'overthinking', 'dreams', 'goals', 'health'] },
+    { file: 'package.json', content: 'packagejson', lines: ['Hayallerini başlat', 'Kendini test et', 'Kendini geliştir', 'Başarılarını paylaş', 'motivation', 'hardwork', 'learning', 'kindness', 'coffee', 'family', 'friends', 'procrastination', 'self-doubt', 'fear'] },
+    { file: 'hakkımda.tsx', content: 'about', lines: ['Muhammet Yeşil', 'Full Stack Developer', 'TypeScript', 'React', 'Next.js'] },
+    { file: 'projeler.tsx', content: 'projects', lines: ['E-Ticaret Platformu', 'Task Yönetim Sistemi', 'API Gateway', 'Next.js', 'MongoDB'] },
+    { file: 'yetenekler.tsx', content: 'skills', lines: ['React', 'Node.js', 'TypeScript', 'MongoDB', 'Docker', 'AWS'] },
+    { file: 'iletişim.tsx', content: 'contact', lines: ['email', 'github', 'instagram', 'linkedin'] },
     ];
 
     const handleSearch = (term: string) => {
@@ -77,13 +89,16 @@ export default function SearchPanel({
                 Search
             </div>
             <div className="p-4">
-                <input
-                    type="text"
-                    value={searchTerm}
-                    onChange={(e) => handleSearch(e.target.value)}
-                    placeholder="Ara..."
-                    className="w-full px-3 py-2 bg-[#252526] border border-gray-600 rounded text-gray-300 text-sm focus:border-blue-500 focus:outline-none"
-                />
+                <div className="relative">
+                    
+                    <input
+                        type="text"
+                        value={searchTerm}
+                        onChange={(e) => handleSearch(e.target.value)}
+                        placeholder="Ara..."
+                        className="w-full pl-10 pr-3 py-2 bg-[#252526] border border-gray-600 rounded text-gray-300 text-sm focus:border-blue-500 focus:outline-none"
+                    />
+                </div>
             </div>
             <div className="flex-1 overflow-y-auto px-2">
                 {searchResults.length > 0 ? (
@@ -97,8 +112,11 @@ export default function SearchPanel({
                                 className="px-2 py-2 hover:bg-gray-700 cursor-pointer rounded text-sm"
                                 onClick={() => onFileSelect(result.content)}
                             >
-                                <div className="text-gray-400 text-xs mb-1">{result.file}</div>
-                                <div className="text-gray-300">{result.line}</div>
+                                <div className="flex items-center gap-2 text-gray-400 text-xs mb-1">
+                                    {getFileIcon(result.file)}
+                                    <span>{result.file}</span>
+                                </div>
+                                <div className="text-gray-300 pl-5">{result.line}</div>
                             </div>
                         ))}
                     </div>
