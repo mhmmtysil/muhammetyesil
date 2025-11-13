@@ -1,65 +1,123 @@
-import Image from "next/image";
+'use client';
+
+import { useState, useEffect } from 'react';
+import ActivityBar from '@/components/VSCode/ActivityBar';
+import Sidebar from '@/components/VSCode/Sidebar';
+import SearchPanel from '@/components/VSCode/SearchPanel';
+import GitPanel from '@/components/VSCode/GitPanel';
+import ExtensionsPanel from '@/components/VSCode/ExtensionsPanel';
+import Editor from '@/components/VSCode/Editor';
+import Terminal from '@/components/VSCode/Terminal';
+import StatusBar from '@/components/VSCode/StatusBar';
 
 export default function Home() {
+  const [activeView, setActiveView] = useState('explorer');
+  const [currentFile, setCurrentFile] = useState('');
+  const [fileClickCount, setFileClickCount] = useState(0);
+  const [isTerminalOpen, setIsTerminalOpen] = useState(false);
+  const [terminalHeight, setTerminalHeight] = useState(200);
+  const [isResizing, setIsResizing] = useState(false);
+
+  const handleFileSelect = (file: string) => {
+    setCurrentFile(file);
+    setFileClickCount(prev => prev + 1);
+    if (activeView !== 'explorer') {
+      setActiveView('explorer');
+    }
+  };
+
+  const handleMouseDown = () => {
+    setIsResizing(true);
+  };
+
+  const handleMouseMove = (e: MouseEvent) => {
+    if (isResizing) {
+      const newHeight = window.innerHeight - e.clientY - 22; // 22 is status bar height
+      if (newHeight >= 100 && newHeight <= 600) {
+        setTerminalHeight(newHeight);
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    setIsResizing(false);
+  };
+
+  useEffect(() => {
+    if (isResizing) {
+      window.addEventListener('mousemove', handleMouseMove as any);
+      window.addEventListener('mouseup', handleMouseUp);
+      return () => {
+        window.removeEventListener('mousemove', handleMouseMove as any);
+        window.removeEventListener('mouseup', handleMouseUp);
+      };
+    }
+  }, [isResizing]);
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Cmd+K (Mac) or Ctrl+K (Windows/Linux)
+      if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+        e.preventDefault();
+        setIsTerminalOpen(prev => !prev);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
+    <div className="h-screen flex flex-col bg-[#1e1e1e] text-gray-300">
+      {/* Top Bar */}
+      <div className="h-9 bg-[#323233] border-b border-gray-700 flex items-center px-2 gap-2">
+        <div className="flex gap-2">
+          <div className="w-3 h-3 rounded-full bg-red-500"></div>
+          <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
+          <div className="w-3 h-3 rounded-full bg-green-500"></div>
+        </div>
+        <div className="flex-1 text-center text-sm text-gray-400">
+          Muhammet Yeşil - Portfolio
+        </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 flex overflow-hidden">
+        <ActivityBar 
+          activeView={activeView} 
+          setActiveView={setActiveView}
+          onTerminalToggle={() => setIsTerminalOpen(!isTerminalOpen)}
+          isTerminalOpen={isTerminalOpen}
         />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+        {activeView === 'explorer' && <Sidebar onFileSelect={handleFileSelect} />}
+        {activeView === 'search' && <SearchPanel onFileSelect={handleFileSelect} />}
+        {activeView === 'git' && <GitPanel />}
+        {activeView === 'extensions' && <ExtensionsPanel />}
+        <Editor currentFile={currentFile} fileClickCount={fileClickCount} showTabs={activeView === 'explorer' || activeView === 'search'} />
+      </div>
+
+      {/* Terminal */}
+      {isTerminalOpen && (
+        <>
+          <div 
+            className={`group h-1 bg-[#252526] cursor-ns-resize transition-all relative ${
+              isResizing ? 'bg-[#007acc]' : 'hover:bg-[#007acc]'
+            }`}
+            onMouseDown={handleMouseDown}
           >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="w-12 h-0.5 bg-gray-600 group-hover:bg-[#007acc] transition-colors rounded-full" />
+            </div>
+          </div>
+          <Terminal 
+            onFileSelect={handleFileSelect} 
+            height={terminalHeight}
+          />
+        </>
+      )}
+
+      {/* Status Bar */}
+      <StatusBar onTerminalToggle={() => setIsTerminalOpen(!isTerminalOpen)} isTerminalOpen={isTerminalOpen} />
     </div>
   );
 }
